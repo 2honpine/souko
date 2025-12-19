@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>迷宮</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Gothic&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Sawarabi Gothic', sans-serif;
+      background-color: #eee;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 40px;
+    }
+
+    #room {
+      background: white;
+      width: 320px;
+      height: 320px;
+      position: relative;
+      border: 2px solid #ccc;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+
+    .door {
+      position: absolute;
+      background: #fff;
+      border: 2px solid #ccc;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+      text-align: center;
+      width: 70px;
+    }
+
+    .door:hover {
+      background: #f0f0f0;
+    }
+
+    .north { top: -40px; left: 50%; transform: translateX(-50%); }
+    .south { bottom: -40px; left: 50%; transform: translateX(-50%); }
+    .west  { left: -90px; top: 50%; transform: translateY(-50%); }
+    .east  { right: -90px; top: 50%; transform: translateY(-50%); }
+
+    #info {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    #info h2 {
+      margin: 5px 0;
+      font-size: 32px;
+    }
+
+    #info p {
+      margin: 0;
+      font-size: 16px;
+      color: #666;
+    }
+
+    #log {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 520px;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-size: 14px;
+      height: auto;
+    }
+
+    #log-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    #click-count {
+      margin-top: 5px;
+      font-size: 13px;
+      color: #333;
+    }
+
+    #listen-check {
+      margin-top: 15px;
+      font-size: 16px;
+      color: #b00;
+      font-weight: bold;
+    }
+    #idea-check {
+      margin-top: 10px;
+      font-size: 15px;
+      color: #005;
+      font-weight: bold;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>迷宮</h1>
+  <div id="room">
+    <div class="door north" onclick="moveTo(doorOrder[0])" id="door0">↑</div>
+    <div class="door east"  onclick="moveTo(doorOrder[1])" id="door1">→</div>
+    <div class="door south" onclick="moveTo(doorOrder[2])" id="door2">↓</div>
+    <div class="door west"  onclick="moveTo(doorOrder[3])" id="door3">←</div>
+    <div id="info">
+      <h2 id="roomName">A</h2>
+      <p id="distance">出口まで：3</p>
+    </div>
+  </div>
+<br><br>
+  <div id="log">
+    <div id="log-title">移動履歴：</div>
+    <div id="log-content">A</div>
+    <div id="click-count">移動回数：0回</div>
+  </div>
+
+  <div id="listen-check"></div>
+  <div id="idea-check"></div>
+  <script>
+
+    const rooms = {
+      A: { doors: ['G', 'O', 'B', 'Y'], distance: 3 },
+      B: { doors: ['C', 'D', 'F', 'Q'], distance: 3 },
+      C: { doors: ['B', 'D', 'S', 'R'], distance: 2 },
+      D: { doors: ['A', 'C', 'I', 'Z'], distance: 3 },
+      E: { doors: ['E', 'L', 'G', 'Q'], distance: 3 },
+      F: { doors: ['A', 'F', 'P', 'U'], distance: 3 },
+      G: { doors: ['N', 'E', 'R', 'K'], distance: 2 },
+      H: { doors: ['X', 'T', 'H', 'K'], distance: 3 },
+      I: { doors: ['P', 'I', 'Y', 'Q'], distance: 3 },
+      J: { doors: ['A', 'E', 'K', 'Z'], distance: 3 },
+      K: { doors: ['D', 'S', 'E', 'N'], distance: 2 },
+      L: { doors: ['B', 'O', 'G', 'W'], distance: 3 },
+      M: { doors: [], distance: 0 },
+      N: { doors: ['R', 'C', 'W', 'M'], distance: 1 },
+      O: { doors: ['V', 'F', 'I', 'X'], distance: 3 },
+      P: { doors: ['A', 'C', 'L', 'Z'], distance: 3 },
+      Q: { doors: ['P', 'O', 'H', 'X'], distance: 3 },
+      R: { doors: ['L', 'E', 'M', 'O'], distance: 1 },
+      S: { doors: ['B', 'C', 'F', 'K'], distance: 3 },
+      T: { doors: ['I', 'D', 'G', 'Z'], distance: 3 },
+      U: { doors: ['E', 'X', 'R', 'L'], distance: 2 },
+      V: { doors: ['A', 'I', 'G', 'V'], distance: 3 },
+      W: { doors: ['F', 'I', 'G', 'V'], distance: 3 },
+      X: { doors: ['Y', 'D', 'R', 'Q'], distance: 2 },
+      Y: { doors: ['B', 'R', 'H', 'N'], distance: 2 },
+      Z: { doors: ['P', 'H', 'A', 'Z'], distance: 4 }
+    };
+
+    let currentRoom = 'A';
+    let doorOrder = [];
+    let pathLog = ['A'];
+    let clickCount = 0;
+
+    function updateRoom() {
+      const roomData = rooms[currentRoom];
+      doorOrder = roomData.doors;
+
+      document.getElementById("roomName").textContent = currentRoom;
+      document.getElementById("distance").textContent = `出口まで：${roomData.distance}`;
+
+      for (let i = 0; i < 4; i++) {
+        const door = document.getElementById(`door${i}`);
+        const label = doorOrder[i] || '';
+        door.textContent = label ? `${['↑','→','↓','←'][i]} ${label}` : '';
+        door.style.opacity = label ? '1' : '0.4';
+        door.style.cursor = label ? 'pointer' : 'default';
+      }
+
+      document.getElementById("log-content").textContent = pathLog.join(' → ');
+      document.getElementById("click-count").textContent = `移動回数：${clickCount}回`;
+
+      const listenDiv = document.getElementById("listen-check");
+      if (clickCount > 0 && clickCount % 3 === 0) {
+        listenDiv.textContent = "＜聞き耳＞成功→歩いている時に「いたい」「やめて」「ふまないで」などの人間の悲鳴が聞こえた気がする。＜POW✕5＞失敗→1d5の正気度減少。成功するまで＜POW✕5＞";
+      } else {
+        listenDiv.textContent = "";
+      }
+      const ideaDiv = document.getElementById("idea-check");
+      if (clickCount === 10) {
+        ideaDiv.textContent = "＜アイデア＞成功→この迷宮には法則性がある。「A」「G」「R」「M」「N」の部屋が鍵になる気がする。";
+      } else {
+        ideaDiv.textContent = "";
+      }
+
+    }
+
+    function moveTo(label) {
+      if (!label) return;
+      clickCount++;
+      if (label === '出口') {
+        document.getElementById("roomName").textContent = 'M';
+        document.getElementById("distance").textContent = '脱出成功！';
+        for (let i = 0; i < 4; i++) {
+          document.getElementById(`door${i}`).textContent = '';
+        }
+        pathLog.push('出口');
+        document.getElementById("log-content").textContent = pathLog.join(' → ');
+        document.getElementById("click-count").textContent = `移動回数：${clickCount}回`;
+        document.getElementById("listen-check").textContent = "";
+        return;
+      }
+      currentRoom = label;
+      pathLog.push(label);
+      updateRoom();
+    }
+
+    updateRoom();
+  </script>
+</body>
+</html>
