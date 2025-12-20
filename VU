@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="UTF-8">
+  <title>LOGんまつ</title>
+ </head>
+ <body>
+   <h1>ヴィクトリアン・アンノウン</h1>
+   <h3><a href="VU1.html">第1話 トリオ・ザ・アンノウン</a></h3>
+   <h3><a href="VU2.html">第2話 ファム・ファタール</a></h3>
+   <h3><a href="VU3.html">第3話 二面性のある男</a></h3>
+   <h3><a href="VU4.html">第4話 天使の家</a></h3>
+   <h3><a href="VU5.html">第5話 親愛なる友人へ</a></h3>
+ </body>
+</html>
