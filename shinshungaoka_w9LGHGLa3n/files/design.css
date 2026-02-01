@@ -1,7 +1,8 @@
 body{
 margin: 20px 20px 80px 20px;
 }
-@media＝”screen and（min-width：900）
+
+@media＝”screen and（min-width：750px）and（min-width：1334px）
 
 /* フッター */
 footer {
@@ -143,6 +144,7 @@ table th { border: 1px solid #ccc; background:#efefef; padding: 4px;}
 .red {margin-bottom: 0em; padding: 0.25em 0.5em;/*上下 左右の余白*/  color: #494949;/*文字色*/  background: transparent;/*背景透明に*/  border-left: solid 10px #E43437;/*左線*/}
 .blue {padding: 0.25em 0.5em;/*上下 左右の余白*/  color: #494949;/*文字色*/  background: transparent;/*背景透明に*/  border-left: solid 10px #4055CC;/*左線*/}
 .yellow {padding: 0.25em 0.5em;/*上下 左右の余白*/  color: #494949;/*文字色*/  background: transparent;/*背景透明に*/  border-left: solid 10px #FFEA61;/*左線*/}
+
 
 
 
